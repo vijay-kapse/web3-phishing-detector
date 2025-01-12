@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from 'react';
-import { API_ENDPOINTS } from '@/lib/config';
+import { API_ENDPOINTS } from '../config';
 
 export default function Home() {
   const [message, setMessage] = useState('');
@@ -23,6 +23,9 @@ export default function Home() {
     setError('');
     setResult(null);
 
+    // Debug logging
+    console.log('Sending request to:', API_ENDPOINTS.predict);
+
     try {
       const response = await fetch(API_ENDPOINTS.predict, {
         method: 'POST',
@@ -32,13 +35,20 @@ export default function Home() {
         body: JSON.stringify({ text: message }),
       });
 
+      // Debug logging
+      console.log('Response status:', response.status);
+      
       if (!response.ok) {
-        throw new Error('Failed to analyze message');
+        const errorData = await response.json().catch(() => ({}));
+        console.error('API Error:', errorData);
+        throw new Error(errorData.error || 'Failed to analyze message');
       }
 
       const data = await response.json();
+      console.log('API Response:', data);
       setResult(data);
     } catch (err) {
+      console.error('Request Error:', err);
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);
