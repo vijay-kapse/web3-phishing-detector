@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web3 Phishing Detector</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold text-center mb-8">Web3 Phishing Detector</h1>
+        
+        <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6">
+            <div class="mb-4">
+                <label for="message" class="block text-gray-700 font-medium mb-2">Enter message to analyze:</label>
+                <textarea
+                    id="message"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    rows="4"
+                    placeholder="Enter the message here..."
+                ></textarea>
+            </div>
+            
+            <button
+                id="analyze"
+                class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+                Analyze Message
+            </button>
+            
+            <div id="result" class="mt-6 hidden">
+                <div class="p-4 rounded-md">
+                    <h3 class="font-medium mb-2">Result:</h3>
+                    <p id="prediction" class="text-lg"></p>
+                    <p id="probability" class="text-sm text-gray-600 mt-1"></p>
+                </div>
+            </div>
+            
+            <div id="error" class="mt-6 hidden">
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                    <p id="error-message"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById('analyze').addEventListener('click', async () => {
+            const message = document.getElementById('message').value;
+            const resultDiv = document.getElementById('result');
+            const errorDiv = document.getElementById('error');
+            
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ text: message }),
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    const prediction = document.getElementById('prediction');
+                    const probability = document.getElementById('probability');
+                    
+                    prediction.textContent = data.is_phishing
+                        ? '🚨 This message appears to be a phishing attempt!'
+                        : '✅ This message appears to be legitimate.';
+                    
+                    prediction.className = data.is_phishing
+                        ? 'text-red-600 font-medium'
+                        : 'text-green-600 font-medium';
+                    
+                    probability.textContent = `Confidence: ${(data.probability * 100).toFixed(2)}%`;
+                    
+                    resultDiv.classList.remove('hidden');
+                    errorDiv.classList.add('hidden');
+                } else {
+                    throw new Error(data.error || 'Failed to analyze message');
+                }
+            } catch (error) {
+                document.getElementById('error-message').textContent = error.message;
+                errorDiv.classList.remove('hidden');
+                resultDiv.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html> 

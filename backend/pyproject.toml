@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "web3-phishing-detector"
+version = "0.1.0"
+authors = [
+    { name = "Web3 Phishing Detector Team" }
+]
+description = "A machine learning system for detecting phishing messages targeting Web3 users"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "torch>=2.0.0",
+    "transformers>=4.30.0",
+    "scikit-learn>=1.0.2",
+    "pandas>=1.5.0",
+    "numpy==1.24.3",
+    "flask>=2.0.0",
+    "python-dotenv>=0.19.0",
+    "wandb>=0.15.0"
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
+namespaces = false 
