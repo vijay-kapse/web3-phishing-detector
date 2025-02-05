@@ -1,4 +1,6 @@
 # Web3 Phishing Detection System
+<img width="1001" alt="Screenshot 2025-01-12 at 11 38 24 PM" src="https://github.com/user-attachments/assets/8a738c8f-5238-4994-8283-354b1b9520b3" />
+
 
 An end-to-end machine learning system for detecting phishing messages targeting Web3 users.
 
